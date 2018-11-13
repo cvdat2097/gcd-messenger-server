@@ -51,4 +51,22 @@ public class GDCRestController {
 
         return result ? "SUCCESS" : "FAILURE";
     }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    public Object[] GETUser() {
+        return DBController.dbUser.toArray();
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value = "/user", method = RequestMethod.POST)
+    public String POSTUser(@RequestBody String body) {
+        JSONObject usr = new JSONObject(body);
+
+        User newUser = new User(usr.getString("username"), usr.getString("avatar"));
+
+        boolean result = DBController.dbUser.add(newUser);
+
+        return result ? "SUCCESS" : "FAILURE";
+    }
 }
