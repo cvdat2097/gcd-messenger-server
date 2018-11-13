@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class GDCRestController {
+public class GCDRestController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/chat", method = RequestMethod.GET)
