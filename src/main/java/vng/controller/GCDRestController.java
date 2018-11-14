@@ -63,6 +63,13 @@ public class GCDRestController {
     public String POSTUser(@RequestBody String body) {
         JSONObject usr = new JSONObject(body);
 
+        int nUser = DBController.dbUser.size();
+        for (int i = 0; i < nUser; i++) {
+            if (DBController.dbUser.get(i).getUsername().equalsIgnoreCase(usr.getString("username"))) {
+                return "USER EXISTS";
+            }
+        }
+
         User newUser = new User(usr.getString("username"), usr.getString("avatar"));
 
         boolean result = DBController.dbUser.add(newUser);
