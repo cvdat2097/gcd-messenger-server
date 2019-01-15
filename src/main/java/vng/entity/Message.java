@@ -2,15 +2,17 @@ package vng.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name = "messages")
@@ -23,36 +25,33 @@ public class Message {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "userid")
-    private Integer userid;
-
     @Column(name = "ms_timestamp", columnDefinition = "timestamp")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date ms_timeStamp;
+    private Date msTimestamp;
 
     @Column(name = "active")
     private boolean active;
 
-    @Transient
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "userid")
     private User user;
 
     // Constructors
     public Message() {
     }
 
-    public Message(Integer id, String content, Integer userid, Date ms_timeStamp, boolean active, User user) {
+    public Message(Integer id, String content, Integer userid, Date msTimestamp, boolean active, User user) {
         this.id = id;
         this.content = content;
-        this.userid = userid;
-        this.ms_timeStamp = ms_timeStamp;
+        this.msTimestamp = msTimestamp;
         this.active = active;
         this.user = user;
     }
 
-    public Message(User user, String content, Date ms_timeStamp) {
+    public Message(User user, String content, Date msTimestamp) {
         this.user = new User(user.getUsername(), user.getAvatar());
         this.content = content;
-        this.ms_timeStamp = ms_timeStamp;
+        this.msTimestamp = msTimestamp;
     }
 
     // Getters & Setters
@@ -73,20 +72,12 @@ public class Message {
         this.content = content;
     }
 
-    public Integer getUserid() {
-        return this.userid;
+    public Date getmsTimestamp() {
+        return this.msTimestamp;
     }
 
-    public void setUserid(Integer userid) {
-        this.userid = userid;
-    }
-
-    public Date getMSTimeStamp() {
-        return this.ms_timeStamp;
-    }
-
-    public void setMSTimeStamp(Date ms_timeStamp) {
-        this.ms_timeStamp = ms_timeStamp;
+    public void setmsTimestamp(Date msTimestamp) {
+        this.msTimestamp = msTimestamp;
     }
 
     public boolean isActive() {
