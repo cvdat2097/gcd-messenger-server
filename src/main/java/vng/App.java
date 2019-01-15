@@ -13,5 +13,7 @@ public class App {
         DBController.init();
 
         SpringApplication.run(App.class, args);
+
+        System.out.println("Server is running...");
     }
 }

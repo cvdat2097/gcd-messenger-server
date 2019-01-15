@@ -6,6 +6,7 @@ import vng.entity.Message;
 import vng.entity.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,7 +31,7 @@ public class GCDRestController {
         }
         for (int i = totalMsg - nMessages; i < totalMsg; i++) {
             Message currentMsg = DBController.dbMessage.get(i);
-            history.add(new Chat(currentMsg.getUser(), currentMsg.getContent(), currentMsg.getTimeStamp()));
+            history.add(new Chat(currentMsg.getUser(), currentMsg.getContent(), currentMsg.getMSTimeStamp().toString()));
 
         }
 
@@ -44,12 +45,14 @@ public class GCDRestController {
         JSONObject usr = new JSONObject(x.get("user").toString());
         JSONObject msg = new JSONObject(x.get("message").toString());
 
-        Message newMsg = new Message(new User(usr.get("username").toString(), usr.get("avatar").toString()),
-                msg.get("content").toString(), msg.get("timeStamp").toString());
+        // Message newMsg = new Message(new User(usr.get("username").toString(), usr.get("avatar").toString()),
+        //         msg.get("content").toString(),new Date(msg.get("timeStamp").toString()));
 
-        boolean result = DBController.dbMessage.add(newMsg);
+        // boolean result = DBController.dbMessage.add(newMsg);
 
-        return result ? "SUCCESS" : "FAILURE";
+        // return result ? "SUCCESS" : "FAILURE";
+        //FIXME: Uncomment the above block
+        return "";
     }
 
     @CrossOrigin(origins = "*")
