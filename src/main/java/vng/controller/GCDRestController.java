@@ -2,12 +2,14 @@ package vng.controller;
 
 import vng.model.DBController;
 import vng.repository.MessageRepository;
-import vng.DTO.*;
+import vng.repository.UserRepository;
 import vng.entity.Message;
 import vng.entity.User;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,19 +31,36 @@ public class GCDRestController {
     @Autowired
     MessageRepository messageRepo;
 
+    @Autowired
+    UserRepository userRepo;
+
+    // ================= TESTING PURPOSE
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/test")
-    public Object[] testMapping() {
+    public Object testMapping(@RequestParam Integer x) {
 
-        ArrayList<Message> list = new ArrayList<Message>();
+        // ArrayList<Message> list = new ArrayList<Message>();
 
-        PageRequest pageInfo = PageRequest.of(1, 3);
-        Page<Message> page = messageRepo.findAll(pageInfo);
+        // PageRequest pageInfo = PageRequest.of(1, 3);
+        // Page<Message> page = messageRepo.findAll(pageInfo);
 
-        page.iterator().forEachRemaining(msg -> list.add(msg));
+        // page.iterator().forEachRemaining(msg -> list.add(msg));
 
-        return list.toArray();
+        // return list.toArray();
+
+        if (x == 1) {
+
+            Message msg = messageRepo.findById(16).get();
+            return msg;
+        } else {
+            User usr = userRepo.findById(1).get();
+            return usr;
+        }
+
+        // return msg;
+
     }
+    // ================= / TESTING PURPOSE
 
     @CrossOrigin(origins = "*")
     @GetMapping(value = "/chat")
@@ -63,7 +83,7 @@ public class GCDRestController {
     }
 
     @CrossOrigin(origins = "*")
-    @RequestMapping(value = "/chat", method = RequestMethod.POST)
+    @PostMapping(value = "/chat")
     public String POSTMessage(@RequestBody String body) {
         JSONObject x = new JSONObject(body);
         JSONObject usr = new JSONObject(x.get("user").toString());
@@ -75,15 +95,30 @@ public class GCDRestController {
 
         // boolean result = DBController.dbMessage.add(newMsg);
 
-        // return result ? "SUCCESS" : "FAILURE";
-        // FIXME: Uncomment the above block
-        return "";
+        String username = usr.get("username").toString();
+        String content = msg.get("content").toString();
+        User sender = userRepo.findByUsername(username);
+        if (sender != null) {
+            Message newMsg = new Message(sender, content);
+
+            messageRepo.save(newMsg);
+            return "1";
+        }
+
+        return "0";
     }
 
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public Object[] GETUser() {
-        return DBController.dbUser.toArray();
+    public ArrayList<User> GETUser() {
+        ArrayList<User> userList = new ArrayList<User>();
+
+        Iterable<User> it = userRepo.findAll();
+
+        it.forEach(msg -> msg.setMessages(null));
+        it.forEach(msg -> userList.add(msg));
+
+        return userList;
     }
 
     @CrossOrigin(origins = "*")
@@ -91,17 +126,17 @@ public class GCDRestController {
     public String POSTUser(@RequestBody String body) {
         JSONObject usr = new JSONObject(body);
 
-        int nUser = DBController.dbUser.size();
-        for (int i = 0; i < nUser; i++) {
-            if (DBController.dbUser.get(i).getUsername().equalsIgnoreCase(usr.getString("username"))) {
-                return "USER EXISTS";
-            }
+        User foundUser = userRepo.findByUsername(usr.getString("username"));
+        if (foundUser != null) {
+            return "USER EXISTS";
         }
 
         User newUser = new User(usr.getString("username"), usr.getString("avatar"));
+        newUser.setPass("123");
+        newUser.setActive(true);
 
-        boolean result = DBController.dbUser.add(newUser);
+        User savedUser = userRepo.save(newUser);
 
-        return result ? "SUCCESS" : "FAILURE";
+        return (savedUser != null) ? "1" : "0";
     }
 }

@@ -14,12 +14,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "messages")
 public class Message {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "content")
@@ -32,6 +33,7 @@ public class Message {
     @Column(name = "active")
     private boolean active;
 
+    
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userid")
     private User user;
@@ -40,12 +42,9 @@ public class Message {
     public Message() {
     }
 
-    public Message(Integer id, String content, Integer userid, Date msTimestamp, boolean active, User user) {
-        this.id = id;
-        this.content = content;
-        this.msTimestamp = msTimestamp;
-        this.active = active;
+    public Message(User user, String content) {
         this.user = user;
+        this.content = content;
     }
 
     public Message(User user, String content, Date msTimestamp) {

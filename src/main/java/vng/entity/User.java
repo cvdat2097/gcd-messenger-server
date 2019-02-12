@@ -1,44 +1,55 @@
 package vng.entity;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
 
     @Id
-    @Column(name="id")
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="username")
+    @Column(name = "username")
     private String username;
 
-    @Column(name="pass")
+    @Column(name = "pass")
     private String pass;
-    
-    @Column(name="fullname")
+
+    @Column(name = "fullname")
     private String fullname;
 
-    @Column(name="avatar")
+    @Column(name = "avatar")
     private String avatar;
 
     @Column(name = "created_timestamp", columnDefinition = "timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created_timestamp;
 
-    @Column(name="active")
+    @Column(name = "active")
     private boolean active;
 
+    // @Transient
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<Message> messages;
 
     // Constructors
     public User() {
@@ -109,6 +120,14 @@ public class User {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public List<Message> getMessages() {
+        return this.messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
     }
 
 }
