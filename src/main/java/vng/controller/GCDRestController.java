@@ -1,6 +1,5 @@
 package vng.controller;
 
-import vng.model.DBController;
 import vng.repository.MessageRepository;
 import vng.repository.UserRepository;
 import vng.entity.Message;
@@ -9,7 +8,6 @@ import vng.entity.User;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
